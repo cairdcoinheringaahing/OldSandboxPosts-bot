@@ -8,7 +8,7 @@ import time
 import stackapi
 
 ROOM_ID = 120733
-DEBUG = True
+DEBUG = False
 
 CGCC = stackapi.StackAPI('codegolf.meta')
 HTML_search = re.compile(r'<a href="/questions/2140/sandbox-for-proposed-challenges/(\d+)\?r=SearchResults#\1"')
