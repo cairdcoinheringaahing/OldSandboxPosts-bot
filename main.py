@@ -134,7 +134,7 @@ def time_until_post():
 def main(room_id):
         while True:
                 if time_until_post() == 0:
-                        chatbot = Chatbot(decrypt = 'caird')
+                        chatbot = Chatbot(decrypt = '')
                         chatbot.login()
                         chatbot.joinRoom(room_id, ignore_msgs)
                         
