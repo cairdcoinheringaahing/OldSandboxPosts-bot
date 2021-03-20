@@ -23,7 +23,7 @@ SEARCH_URLS = ['https://codegolf.meta.stackexchange.com/search?q=inquestion%3A21
 POST_TIME = datetime.time(
         1, # hour
         0, # minute
-        0,  # second
+        0, # second
 )
 
 if DEBUG:
