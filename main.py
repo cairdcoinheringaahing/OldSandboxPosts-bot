@@ -1,6 +1,7 @@
 from chatbot import Chatbot, log
 
 import datetime
+import html
 import re
 import requests
 import time
@@ -51,12 +52,22 @@ def get_posts(choose = 'both'):
         
         return post_ids
 
-def get_title(html_page, index):
+def get_title(html_page):
         if '<h1>' in html_page: title = TITLE1_search.search(html_page).group(1)
         elif '<h2>' in html_page: title = TITLE2_search.search(html_page).group(1)
-        else: title = '({})'.format(index)
+        else: title = '(untitled)'
 
-        return title.split('<a href')[0].strip()
+        return html.unescape(title.split('<a href')[0].strip())
+
+def not_posted(text):
+        if len(text) <= 500:
+                return False
+        if re.search(r'<a href="https://codegolf.stackexchange.com/q(uestions)?/\d+.*?>posted</a>', text, re.I):
+                return False
+        if re.search(r'<h([12])><a href="https://codegolf.stackexchange.com/q(uestions)?/\d+.*?</a></h\1>', text):
+                return False
+
+        return True
 
 def filter_posted():
         kept_posts = {'lastactive': [], 'c': [], 'created': []}
@@ -69,11 +80,11 @@ def filter_posted():
                 
                 posts = CGCC.fetch('posts/{ids}', ids = array, filter = 'withbody')
                 
-                for index, item in enumerate(posts['items'], 1):
-                        if len(item['body']) >= 500:
+                for item in posts['items']:
+                        if not_posted(item['body']):
                                 kept_posts[search_type].append(
                                         [
-                                                get_title(item['body'], index),
+                                                get_title(item['body']),
                                                 item['post_id']
                                         ]
                                 )
@@ -132,22 +143,15 @@ def time_until_post():
         return (post_at - today).seconds
 
 def main(room_id):
-        while True:
-                if time_until_post() == 0:
-                        chatbot = Chatbot(decrypt = '')
-                        chatbot.login()
-                        chatbot.joinRoom(room_id, ignore_msgs)
-                        
-                        for msg in get_msg():
-                                chatbot.rooms_joined[0].sendMessage(msg)
+        chatbot = Chatbot(decrypt = 'caird')
+        chatbot.login()
+        chatbot.joinRoom(room_id, ignore_msgs)
+        
+        for msg in get_msg():
+                chatbot.rooms_joined[0].sendMessage(msg)
 
-                        chatbot.leaveAllRooms()
-                        chatbot.logout()
-                        del chatbot
+        chatbot.leaveAllRooms()
+        return
 
 if __name__ == '__main__':
         main(ROOM_ID)
-
-
-
-
