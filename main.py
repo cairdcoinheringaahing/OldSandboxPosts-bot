@@ -11,10 +11,11 @@ import stackapi
 ROOM_ID = 120733
 DEBUG = False
 
-CGCC = stackapi.StackAPI('codegolf.meta')
+CGCC = stackapi.StackAPI('codegolf.meta', key = '0lYaLshi5yEGuEcK3ZxYHA((')
 HTML_search = re.compile(r'<a href="/questions/2140/sandbox-for-proposed-challenges/(\d+)\?r=SearchResults#\1"')
 TITLE1_search = re.compile(r'<h1> *(.*?) *</h1>')
 TITLE2_search = re.compile(r'<h2> *(.*?) *</h2>')
+MATHJAX = re.compile(r'<span class="math-container">(.*?)</span>')
 EMPTY_LINK = '[{}](https://codegolf.meta.stackexchange.com/a/{})'
 
 SEARCH_URLS = ['https://codegolf.meta.stackexchange.com/search?q=inquestion%3A2140+lastactive%3A{}+score%3A0..+',
@@ -57,7 +58,11 @@ def get_title(html_page):
         elif '<h2>' in html_page: title = TITLE2_search.search(html_page).group(1)
         else: title = '(untitled)'
 
-        return html.unescape(title.split('<a href')[0].strip())
+        title = title.split('<a href')[0].strip()
+        if MATHJAX.search(title):
+                title = MATHJAX.sub(r'\1', title).replace('$$', r'\$')
+
+        return html.unescape(title)
 
 def not_posted(text):
         if len(text) <= 500:
