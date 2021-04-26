@@ -8,7 +8,7 @@ import time
 
 import stackapi
 
-ROOM_ID = 120733
+ROOMS = [120733]
 DEBUG = False
 
 CGCC = stackapi.StackAPI('codegolf.meta', key = '0lYaLshi5yEGuEcK3ZxYHA((')
@@ -159,4 +159,5 @@ def main(room_id):
         return
 
 if __name__ == '__main__':
-        main(ROOM_ID)
+        for room in ROOMS:
+                main(room)
