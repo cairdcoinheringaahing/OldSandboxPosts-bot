@@ -15,12 +15,18 @@ CGCC = stackapi.StackAPI('codegolf.meta', key = '0lYaLshi5yEGuEcK3ZxYHA((')
 HTML_search = re.compile(r'<a href="/questions/2140/sandbox-for-proposed-challenges/(\d+)\?r=SearchResults#\1"')
 TITLE1_search = re.compile(r'<h1> *(.*?) *</h1>')
 TITLE2_search = re.compile(r'<h2> *(.*?) *</h2>')
-MATHJAX = re.compile(r'<span class="math-container">(.*?)</span>')
 EMPTY_LINK = '[{}](https://codegolf.meta.stackexchange.com/a/{})'
 
 SEARCH_URLS = ['https://codegolf.meta.stackexchange.com/search?q=inquestion%3A2140+lastactive%3A{}+score%3A0..+',
                'https://codegolf.meta.stackexchange.com/search?q=inquestion%3A2140+created%3A{}+score%3A0..+']
 
+HTML_REPLACES = {
+
+        'strong': '**',
+        'em': '*',
+        'code': '`'
+
+}
 
 POST_TIME = datetime.time(
         1, # hour
@@ -49,18 +55,29 @@ def get_posts(choose = 'both'):
         post_ids = [search(each_url) for each_url in SEARCH_URLS]
 
         if choose == 'create': return [post_ids[1]]
-        if choose == 'active': return [post_ids[0]]
+        if choose == 'active': return [post_ids[0] + ['22181', '22209']]
         
         return post_ids
+
+def replace(string):
+        for tag, markdown in HTML_REPLACES.items():
+                string = re.sub(r'<{0}>(.*?)</{0}>'.format(tag), r'{0}\1{0}'.format(markdown), string)
+        return string
 
 def get_title(html_page):
         if '<h1>' in html_page: title = TITLE1_search.search(html_page).group(1)
         elif '<h2>' in html_page: title = TITLE2_search.search(html_page).group(1)
         else: title = '(untitled)'
 
-        title = title.split('<a href')[0].strip()
-        if MATHJAX.search(title):
-                title = MATHJAX.sub(r'\1', title).replace('$$', r'\$')
+        prev = title
+        title = replace(title)
+        while prev != title:
+                prev = title
+                title = replace(title)
+        
+        title = re.sub(r'<a href="https://codegolf.stackexchange.com/questions/tagged/.*? class="post-tag" title="show questions tagged .*?" rel="tag">(.*?)</a>', r'\[\1\]', title)
+        title = re.sub(r'<a href.*?>(.*?)</a>', r'\1', title)
+        title = re.sub(r'<span class="math-container">(.*?)</span>', r'\1', title)
 
         return html.unescape(title)
 
