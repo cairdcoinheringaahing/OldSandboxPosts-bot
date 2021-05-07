@@ -74,6 +74,8 @@ def get_title(html_page):
         while prev != title:
                 prev = title
                 title = replace(title)
+
+        title = title.replace('[', r'\[').replace(']', r'\]')
         
         title = re.sub(r'<a href="https://codegolf.stackexchange.com/questions/tagged/.*? class="post-tag" title="show questions tagged .*?" rel="tag">(.*?)</a>', r'\[\1\]', title)
         title = re.sub(r'<a href.*?>(.*?)</a>', r'\1', title)
