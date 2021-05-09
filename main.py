@@ -55,7 +55,7 @@ def get_posts(choose = 'both'):
         post_ids = [search(each_url) for each_url in SEARCH_URLS]
 
         if choose == 'create': return [post_ids[1]]
-        if choose == 'active': return [post_ids[0] + ['22181', '22209']]
+        if choose == 'active': return [post_ids[0]]
         
         return post_ids
 
