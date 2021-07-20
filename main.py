@@ -8,13 +8,13 @@ import time
 
 import stackapi
 
-ROOMS = [120733]
+ROOMS = [240, 123403, 120733]
 DEBUG = False
 
 CGCC = stackapi.StackAPI('codegolf.meta', key = '0lYaLshi5yEGuEcK3ZxYHA((')
 HTML_search = re.compile(r'<a href="/questions/2140/sandbox-for-proposed-challenges/(\d+)\?r=SearchResults#\1"')
-TITLE1_search = re.compile(r'<h1> *(.*?) *</h1>')
-TITLE2_search = re.compile(r'<h2> *(.*?) *</h2>')
+TITLE1_search = re.compile(r'<h1.*?> *(.*?) *</h1>')
+TITLE2_search = re.compile(r'<h2.*?> *(.*?) *</h2>')
 EMPTY_LINK = '[{}](https://codegolf.meta.stackexchange.com/a/{})'
 
 SEARCH_URLS = ['https://codegolf.meta.stackexchange.com/search?q=inquestion%3A2140+lastactive%3A{}+score%3A0..+',
@@ -65,8 +65,9 @@ def replace(string):
         return string
 
 def get_title(html_page):
-        if '<h1>' in html_page: title = TITLE1_search.search(html_page).group(1)
-        elif '<h2>' in html_page: title = TITLE2_search.search(html_page).group(1)
+        print(html_page)
+        if '<h1>' in html_page or '</h1>' in html_page: title = TITLE1_search.search(html_page).group(1)
+        elif '<h2>' in html_page or '</h2>' in html_page: title = TITLE2_search.search(html_page).group(1)
         else: title = '(untitled)'
 
         prev = title
@@ -124,7 +125,6 @@ def format_links(ids):
         return [EMPTY_LINK.format(title, post_id) for (title, post_id) in ids]
 
 def get_msg():
-        
         posts = filter_posted()
         indices = []
         index = 0
