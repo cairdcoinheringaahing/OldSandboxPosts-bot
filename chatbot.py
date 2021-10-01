@@ -35,7 +35,7 @@ EVENTS = {
         6: 'Message starred/unstarred',
         #7: 'Unknown',
         8: 'Bot was pinged',
-        9: 'Unknown',
+        9: 'Flag was raised',
         10: 'Message deleted',
         #11: 'Unknown',
         #12: 'Unknown',
