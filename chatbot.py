@@ -273,7 +273,7 @@ class Chatbot():
                 email, password = get_credidentials(self.decrypt_key)
                 
                 # Login to OpenId / CSE
-                fkey=getField("fkey", "https://openid.stackexchange.com/account/login")
+                fkey=getField("fkey", "codegolf.stackexchange.com/users/login")
                 payload = {"email": email, "password": password, "isSignup":"false", "isLogin":"true","isPassword":"false","isAddLogin":"false","hasCaptcha":"false","ssrc":"head","submitButton":"Log in",
                            "fkey": fkey}
                 r = self.sendRequest("https://{}/users/login-or-signup/validation/track".format(host),"post",payload).text
